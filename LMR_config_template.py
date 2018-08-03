@@ -276,6 +276,9 @@ class core(ConfigGroup):
     loc_rad = None
 
     inflation_fact = None
+    
+    # If no proxies are assimilated, revert to prior if True and Nan's if False
+    revert_to_prior = False
 
     # Reference period w.r.t. which anomalies are to be defined.
     anom_reference_period = (1951,1980)
@@ -324,6 +327,7 @@ class core(ConfigGroup):
         self.nens = self.nens
         self.loc_rad = self.loc_rad
         self.inflation_fact = self.inflation_fact
+        self.revert_to_prior = self.revert_to_prior
         self.seed = self.seed
         self.datadir_output = self.datadir_output
         self.archive_dir = self.archive_dir

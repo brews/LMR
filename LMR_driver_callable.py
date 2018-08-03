@@ -97,6 +97,7 @@ def LMR_driver_callable(cfg=None):
     nens = core.nens
     loc_rad = core.loc_rad
     inflation_fact = core.inflation_fact
+    revert_to_prior = core.revert_to_prior
     prior_source = prior.prior_source
     datadir_prior = prior.datadir_prior
     datafile_prior = prior.datafile_prior
@@ -633,11 +634,23 @@ def LMR_driver_callable(cfg=None):
             # End of loop on proxies
 
         # Dump Xa to file (use Xb in case no proxies assimilated for
-        # current year)
-        try:
-            np.save(filen, Xb.filled())
-        except AttributeError as e:
-            np.save(filen, Xb)
+        # current year). If not proxies are assimilated, Xa will be equal to
+        # Xb if revert_to_prior is True and Xa will turn to Nan's if
+        # revert_to_prior is False.
+        if np.array_equal(Xb, Xb_one_aug.copy()) is False or revert_to_prior is True:
+            try:
+                np.save(filen, Xb.filled())
+            except AttributeError as e:
+                np.save(filen, Xb)
+        else:
+            if verbose > 2:
+                print('No proxies were assimilated. Xa was replaced with NaNs.')
+            Xb_nans = np.empty(Xb.shape)
+            Xb_nans[:] = np.nans
+            try:
+                np.save(filen, Xb_nans.filled())
+            except AttributeError as e:
+                np.save(filen, Xb_nans)
 
     end_time = time() - begin_time
 
