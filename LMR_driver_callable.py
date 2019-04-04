@@ -185,9 +185,14 @@ def LMR_driver_callable(cfg=None):
         print('Uploading proxy data & PSM info ...')
         print('-----------------------------------')
 
+    # We pass this lookup_window instead of recon_period because this window
+    # spans the actual time-span that we look for proxies to average together.
+    proxy_lookup_window = (recon_period[0] - recon_timescale // 2,
+                           recon_period[1] + recon_timescale // 2)
+
     # Build dictionaries of proxy sites to assimilate and those set aside for
     # verification
-    prox_manager = LMR_proxy.ProxyManager(cfg, recon_period)
+    prox_manager = LMR_proxy.ProxyManager(cfg, proxy_lookup_window)
     type_site_assim = prox_manager.assim_ids_by_group
 
     if verbose > 3:
